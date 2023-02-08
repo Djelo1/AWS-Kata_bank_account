@@ -1,0 +1,26 @@
+
+[
+    {
+        "id" : 1,
+        "name" : "LOURENCO",
+        "firstname" : "Dylan",
+        "accountnumber" : 1234567890,
+        "amount" : 80
+    },
+    {
+        "id" : 2,
+        "name" : "Client2",
+        "firstname" : "X2",
+        "accountnumber" : 1234637890,
+        "amount" : 130
+    },
+    {
+        "id" : 3,
+        "name" : "Client3",
+        "firstname" : "X3",
+        "accountnumber" : 1234847890,
+        "amount" : 500
+    }
+]
+
+Peu être ignoré maintenant car la database est en place...
