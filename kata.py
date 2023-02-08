@@ -15,8 +15,8 @@ class Account(db.Model):
     def __repr__(self):
         return f'<Account id={self.id} account_number={self.accountnumber} balance={self.balance}>'
 
-    def __init__(self, accountnumber, balance):
-        self.accountnumber = accountnumber
+    def __init__(self, account_number, balance):
+        self.accountnumber = account_number
         self.balance = balance
 
 @app.route('/api/v1/create_account', methods=['POST'])
