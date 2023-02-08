@@ -19,6 +19,7 @@ class Account(db.Model):
         self.accountnumber = account_number
         self.balance = balance
 
+        
 @app.route('/api/v1/create_account', methods=['POST'])
 def create_account():
     data = request.get_json()
@@ -32,6 +33,7 @@ def create_account():
     return jsonify({"message": "Account created successfully"}), 200
 
 
+
 @app.route('/api/v1/account/<int:account_id>', methods=['GET'])
 def account(account_id):
     account = Account.query.filter_by(id=account_id).first()
@@ -41,6 +43,7 @@ def account(account_id):
         return jsonify({'id': account.id, 'accountnumber': account.accountnumber, 'balance': account.balance}), 200
 
 
+    
 @app.route('/api/v1/deposit', methods=['POST'])
 def deposit():
     data = request.get_json()
@@ -54,9 +57,11 @@ def deposit():
     else:
         return jsonify({"message": "Account not found"}), 404
 
+    
 
 @app.route('/api/v1/withdraw/<int:account_id>', methods=['DELETE'])
 def withdraw(account_id):
+   
     account = Account.query.filter_by(id=account_id).first()
     if not account:
         return 'Account not found', 404
