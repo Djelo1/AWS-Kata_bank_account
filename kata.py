@@ -26,7 +26,24 @@ class Account(db.Model):
     self.creationDate = creationDate
     self.modificationDate = modificationDate
     self.amount = amount
+    
+class Operation(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  type = db.Column(db.String(20), unique=False, nullable=False)
+  amount = db.Column(db.Integer, unique=False, nullable=False)
+  executionDate = db.Column(db.String(20), unique=False, nullable=False)
+  realDate = db.Column(db.String(20), unique=False, nullable=False)
+  userFrom = db.Column(db.Integer, unique=False, nullable=False)
+  accountFrom = db.Column(db.Integer, unique=False, nullable=False)
 
+  def __init__(self, type, amount, executionDate, realDate, userFrom, accountFrom):
+    self.type = type
+    self.amount = amount
+    self.executionDate = executionDate
+    self.realDate = realDate
+    self.userFrom = userFrom
+    self.accountFrom = accountFrom
+    
 db.create_all()
         
 @app.route('/api/v1/create-account', methods=['POST'])
