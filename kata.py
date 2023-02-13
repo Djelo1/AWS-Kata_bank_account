@@ -82,7 +82,7 @@ def deposit():
   modificationDate = date.today()
   amount = int(get_amount(body['account_id'])) + int(body['deposit'])
   try:   
-    db.session.query(BankAccount).filter_by(id=body['account_id']).update(
+    db.session.query(Account).filter_by(id=body['account_id']).update(
       dict(modificationDate=modificationDate, amount=amount))
     db.session.commit()
     new_operation("deposit", amount, body['user_id'], body['account_id'])
@@ -96,7 +96,7 @@ def withdrawal():
   body = request.get_json()
   modificationDate = date.today()
   amount = int(get_amount(body['account_id'])) - int(body['deposit']) 
-  account = BankAccount.query.filter_by(id=body['account_id']).first()
+  account = Account.query.filter_by(id=body['account_id']).first()
   if not account:
       return 'Account not found', 404
   if account.amount > amount:
@@ -119,7 +119,7 @@ def get_accounts():
     for Account in db.session.query(Account).all():
       del Account.__dict__['_sa_instance_state'] #TypeError: Object of type 'InstanceState' is not JSON serializable
       Accounts.append(Account.__dict__)
-    return jsonify(bankAccounts), 200
+    return jsonify(Accounts), 200
   except SQLAlchemyError as e:
     error = str(e.__dict__['orig'])
     return error, 500
