@@ -7,7 +7,7 @@ from datetime import date
 app = Flask(__name__)
 
 if __name__ == '__main__':
-  app.run(debug=True)
+  app.run(debug=True, port = 8080)
   
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 db = SQLAlchemy(app)
