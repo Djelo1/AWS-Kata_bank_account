@@ -1,0 +1,65 @@
+<div style="margin: 5em">
+
+  <form [formGroup]="form">
+    <div class="form-group">
+      <label for="id">Account id</label>
+      <input type="number" class="form-control" id="id"  placeholder="Enter id"
+             [(ngModel)]="_account.id" formControlName="id">
+    </div>
+    <div class="form-group">
+      <label for="type">Account type</label>
+      <input type="text" class="form-control" id="type" placeholder="Enter account type"
+             [(ngModel)]="_account.type" formControlName="type">
+    </div>
+    <div class="form-group">
+      <label for="surname">Surname</label>
+      <input type="text" class="form-control" id="surname" placeholder="Enter surname"
+             [(ngModel)]="_account.surname" formControlName="surname">
+    </div>
+    <div class="form-group">
+      <label for="creationDate">Creation date</label>
+      <input type="date" class="form-control" id="creationDate" placeholder="Enter date of birth"
+             [(ngModel)]="_account.creationDate" formControlName="creationDate">
+    </div>
+    <div class="form-group">
+      <label for="userId">Select User</label>
+      <div class="input-group mb-3">
+        <select class="form-select" id="userId" aria-label="Example select with button addon"
+                [(ngModel)]="_account.userId" formControlName="userId"  >
+          <option *ngFor="let user of _userList" [ngValue]="user">  {{user.cin}}-{{user.name}} </option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" (click)="addAccount()">Save</button>
+  </form>
+
+</div>
+
+<div style="margin: 5em">
+<table class="table">
+  <thead>
+  <tr>
+    <th scope="col">id</th>
+    <th scope="col">type</th>
+    <th scope="col">surname</th>
+    <th scope="col">creationDate</th>
+    <th scope="col">modificationDate</th>
+    <th scope="col">userId</th>
+    <th scope="col">amount</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let account of _accountList">
+    <td>{{account.id}}</td>
+    <td>{{account.type}}</td>
+    <td>{{account.surname}}</td>
+    <td>{{account.creationDate}}</td>
+    <td>{{account.modificationDate}}</td>
+    <td>{{account.userId.cin}}-{{account.userId.name}}</td>
+    <td>{{account.amount}}</td>
+
+  </tr>
+  </tbody>
+</table>
+</div>

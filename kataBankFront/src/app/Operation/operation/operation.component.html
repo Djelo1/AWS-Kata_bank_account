@@ -1,0 +1,92 @@
+<div style="margin: 5em">
+
+<form  [formGroup]="form">
+
+
+  <div class="form-group">
+    <label for="User">Select User</label>
+    <div class="input-group mb-3">
+      <select class="form-select" id="User" aria-label="Select User"
+              [(ngModel)]="operation.userFrom"
+              formControlName="userFrom"
+              (change)="onSelectedUser()">
+        <option> chose a user  </option>
+        <option *ngFor="let user of _userList" [ngValue]="user">
+          {{user.cin}}- {{user.name}}
+        </option>
+      </select>
+    </div>
+  </div>
+
+
+  <div class="form-group">
+    <label for="Account">Select Account</label>
+    <div class="input-group mb-3">
+      <select class="form-select" id="Account" aria-label="Select User"
+              [(ngModel)]="operation.accountFrom"
+              formControlName="accountFrom"
+              (change)="onSelectedAccount()">>
+        <option> chose an account  </option>
+        <option *ngFor="let account of _accountList" [ngValue]="account">{{account.id}}--{{account.type}}</option>
+       </select>
+    </div>
+  </div>
+
+
+  <div class="form-group">
+    <label for="amount">Amount</label>
+    <input type="number" class="form-control" id="amount"
+           [(ngModel)]="operation.amount" formControlName="amount"
+           placeholder="EnteraAmount" >
+  </div>
+
+  <div class="form-group">
+    <label for="type">Select Account</label>
+    <div class="input-group mb-3">
+      <select class="form-select" id="type" aria-label="Select type"
+                [(ngModel)]="operation.type" formControlName="type">
+          <option *ngFor="let selectedObj of languageObjects" [ngValue]="selectedObj">{{selectedObj}}</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="amountops">Amount operation</label>
+    <input type="text" class="form-control" id="amountops"
+           [(ngModel)]="amountOps" formControlName="amountOps"
+           placeholder="Enter amountops">
+  </div>
+
+
+  <button type="submit" class="btn btn-primary" (click)="execOps()">Execute Ops</button>
+</form>
+</div>
+
+
+<div style="margin: 5em">
+
+  <table class="table">
+    <thead>
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">type</th>
+      <th scope="col">amount</th>
+      <th scope="col">executionDate</th>
+      <th scope="col">realDate</th>
+      <th scope="col">userFrom</th>
+      <th scope="col">accountFrom</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let ops of _operationList">
+      <td>{{ops.id}}</td>
+      <td>{{ops.type}}</td>
+      <td>{{ops.amount}}</td>
+      <td>{{ops.executionDate}}</td>
+      <td>{{ops.realDate}}</td>
+      <td>{{ops.userFrom.cin}}-{{ops.userFrom.name}}</td>
+      <td>{{ops.accountFrom.id}}</td>
+
+    </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,61 @@
+<div style="margin: 5em">
+
+  <form [formGroup]="form">
+    <div class="form-group">
+      <label for="CIN">CIN</label>
+      <input type="number" class="form-control" [(ngModel)]="user.cin" formControlName="CIN" id="CIN" placeholder="Enter CIN">
+    </div>
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" class="form-control" [(ngModel)]="user.name" formControlName="name" id="name" placeholder="Enter name">
+    </div>
+    <div class="form-group">
+      <label for="surname">Surname</label>
+      <input type="text" class="form-control" [(ngModel)]="user.surname" formControlName="surname" id="surname" placeholder="Enter surname">
+    </div>
+    <div class="form-group">
+      <label for="dateOfBirth">Date of birth</label>
+      <input type="date" class="form-control" [(ngModel)]="user.dateOfBirth" formControlName="dateOfBirth" id="dateOfBirth" placeholder="Enter date of birth">
+    </div>
+    <div class="form-group">
+      <label for="creationDate">Creation date</label>
+      <input type="date" class="form-control" [(ngModel)]="user.creationDate" formControlName="creationDate" id="creationDate" placeholder="User creation date">
+    </div>
+    <div class="form-group">
+      <label for="jobTitle">Job title</label>
+      <input type="text" class="form-control" [(ngModel)]="user.jobTitle" formControlName="jobTitle" id="jobTitle" placeholder="Enter Job title">
+    </div>
+    <button type="submit" class="btn btn-primary" (click)="addUser()">Save</button>
+  </form>
+
+</div>
+<div style="margin: 5em">
+
+  <div style="margin: 5em">
+    <table class="table">
+      <thead>
+      <tr>
+        <th scope="col">cin</th>
+        <th scope="col">name</th>
+        <th scope="col">surname</th>
+        <th scope="col">dateOfBirth</th>
+        <th scope="col">creationDate</th>
+        <th scope="col">modificationDate</th>
+        <th scope="col">jobTitle</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let user of _userList">
+        <td>{{user.cin}}</td>
+        <td>{{user.name}}</td>
+        <td>{{user.surname}}</td>
+        <td>{{user.dateOfBirth}}</td>
+        <td>{{user.creationDate}}</td>
+        <td>{{user.modificationDate}}</td>
+        <td>{{user.jobTitle}}</td>
+
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
