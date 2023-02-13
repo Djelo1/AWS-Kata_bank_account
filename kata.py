@@ -1,37 +1,54 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+import os
+from sqlalchemy.exc import SQLAlchemyError
+from datetime import date
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///accounts.db'
+
+if __name__ == '__main__':
+  app.run(debug=True)
+  
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 db = SQLAlchemy(app)
 
 class Account(db.Model):
-    id = db.Column(db.Integer, unique=True, primary_key=True)
-    account_number = db.Column(db.Integer, unique=True, nullable=False)
-    name = db.Column(db.String(30))
-    firstname = db.Column(db.String(30))
-    balance = db.Column(db.Float, nullable=False)
+  id = db.Column(db.Integer, primary_key=True)
+  type = db.Column(db.String(20), unique=False, nullable=False)
+  surname = db.Column(db.String(20), unique=False, nullable=False)
+  creationDate = db.Column(db.String(20), unique=False, nullable=False)
+  modificationDate = db.Column(db.String(20), unique=False, nullable=False)
+  amount = db.Column(db.Integer, unique=False, nullable=False)
 
-    def __repr__(self):
-        return f'<Account id={self.id} account_number={self.accountnumber} balance={self.balance}>'
+  def __init__(self, type, name, creationDate, modificationDate, userId, amount):
+    self.type = type
+    self.surname = name
+    self.creationDate = creationDate
+    self.modificationDate = modificationDate
+    self.amount = amount
 
-    def __init__(self, account_number, balance):
-        self.accountnumber = account_number
-        self.balance = balance
-
+db.create_all()
         
-@app.route('/api/v1/create_account', methods=['POST'])
+@app.route('/api/v1/create-account', methods=['POST'])
 def create_account():
-    data = request.get_json()
-    account_number = data.get('account_number')
-    balance = data.get('balance')
-    if not account_number or not balance:
-        return jsonify({"message": "Account number and balance are required"}), 400
-    new_account = Account(account_number=account_number, balance=balance)
-    db.session.add(new_account)
+  body = request.get_json()
+  creationDate = date.today()
+  modificationDate = date.today()
+  try:   
+    db.session.add(Account(body['type'], body['surname'], creationDate, modificationDate, body['userId'], body['amount']))
     db.session.commit()
-    return jsonify({"message": "Account created successfully"}), 200
+    return "Account created", 200
+  except SQLAlchemyError as e:
+    error = str(e.__dict__['orig'])
+    return error, 500
 
+def get_amount(id):
+  try:
+    Account = Account.query.get(id)
+    return Account.__dict__['amount'], 200
+  except SQLAlchemyError as e:
+    error = str(e.__dict__['orig'])
+    return error, 500
 
 
 @app.route('/api/v1/account/<int:account_id>', methods=['GET'])
@@ -42,43 +59,50 @@ def account(account_id):
     else:
         return jsonify({'id': account.id, 'accountnumber': account.accountnumber, 'balance': account.balance}), 200
 
-
-    
-@app.route('/api/v1/deposit', methods=['POST'])
+@app.route('/api/v1/deposit', methods=['PUT'])
 def deposit():
-    data = request.get_json()
-    id = data.get('id')
-    account_number = data.get('accountnumber')
-    account = Account.query.filter_by(id=id).first()
-    if account:
-        account.accountnumber = account_number
-        db.session.commit()
-        return {"message": "Deposit done."}
-    else:
-        return jsonify({"message": "Account not found"}), 404
-
-    
-
-@app.route('/api/v1/withdraw/<int:account_id>', methods=['DELETE'])
-def withdraw(account_id):
-   
-    account = Account.query.filter_by(id=account_id).first()
-    if not account:
-        return 'Account not found', 404
-
-    amount = request.json.get('amount')
-    if not amount:
-        return '"amount" is required', 400
-
-    account.balance -= amount
-    if account.balance < 0:
-        return 'Insufficient funds', 400
-
+  body = request.get_json()
+  modificationDate = date.today()
+  amount = int(get_amount(body['account_id'])) + int(body['deposit'])
+  try:   
+    db.session.query(BankAccount).filter_by(id=body['account_id']).update(
+      dict(modificationDate=modificationDate, amount=amount))
     db.session.commit()
-    return '', 204
+    new_operation("deposit", amount, body['user_id'], body['account_id'])
+    return "The deposit have been done", 200
+  except SQLAlchemyError as e:
+    error = str(e.__dict__['orig'])
+    return error, 500
 
+@app.route('/api/v1/withdrawal', methods=['PUT'])
+def withdrawal():
+  body = request.get_json()
+  modificationDate = date.today()
+  amount = int(get_amount(body['account_id'])) - int(body['deposit']) 
+  account = BankAccount.query.filter_by(id=body['account_id']).first()
+  if not account:
+      return 'Account not found', 404
+  if account.amount > amount:
+    try:   
+      db.session.query(Account).filter_by(id=body['account_id']).update(
+        dict(modificationDate=modificationDate, amount=amount))
+      db.session.commit()
+      new_operation("withdrawal", amount, body['user_id'], body['account_id'])
+      return "The withdrawal have been done", 200
+    except SQLAlchemyError as e:
+      error = str(e.__dict__['orig'])
+      return error
+  else:
+    return "You doesn't have enough money", 400
 
-if __name__ == '__main__':
-     with app.app_context():
-        db.create_all()
-        app.run(debug=True, port=8080)
+@app.route('/api/v1/accounts', methods=['GET'])
+def get_accounts():
+  Accounts = []
+  try:
+    for Account in db.session.query(Account).all():
+      del Account.__dict__['_sa_instance_state'] #TypeError: Object of type 'InstanceState' is not JSON serializable
+      Accounts.append(Account.__dict__)
+    return jsonify(bankAccounts), 200
+  except SQLAlchemyError as e:
+    error = str(e.__dict__['orig'])
+    return error, 500
